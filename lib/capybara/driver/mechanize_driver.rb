@@ -1,6 +1,6 @@
 require 'mechanize'
 
-class Capybara::Driver::Mechanize < Capybara::Driver::RackTest
+class Capybara::Driver::Mechanize < Capybara::RackTest::Driver
   extend Forwardable
   
   def_delegator :agent, :scheme_handlers
