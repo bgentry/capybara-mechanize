@@ -30,6 +30,11 @@ describe Capybara::Driver::Mechanize do
       @driver.body.should == %{<pre id="results">--- success\n</pre>}
     end
 
+    it "should pass arguments through to a delete request" do
+      @driver.delete("#{REMOTE_TEST_URL}/test_params", {:form => "success"})
+      @driver.body.should == "success"
+    end
+
     context "for a post request" do
 
       it "should transform nested map in post data" do
@@ -37,6 +42,23 @@ describe Capybara::Driver::Mechanize do
         @driver.body.should == %{<pre id="results">--- \nkey: value\n</pre>}
       end
 
+    end
+
+    it "should pass headers with a GET request" do
+      @driver.get("#{REMOTE_TEST_URL}/test_headers", {}, {"FOO" => "foo value"})
+      @driver.body.should == "foo value"
+    end
+    it "should pass headers with a POST request" do
+      @driver.post("#{REMOTE_TEST_URL}/test_headers", {}, {"FOO" => "foo value"})
+      @driver.body.should == "foo value"
+    end
+    it "should pass headers with a PUT request" do
+      @driver.put("#{REMOTE_TEST_URL}/test_headers", {}, {"FOO" => "foo value"})
+      @driver.body.should == "foo value"
+    end
+    it "should pass headers with a DELETE request" do
+      @driver.delete("#{REMOTE_TEST_URL}/test_headers", {}, {"FOO" => "foo value"})
+      @driver.body.should == "foo value"
     end
 
     it_should_behave_like "driver"

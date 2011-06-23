@@ -50,7 +50,7 @@ class Capybara::Driver::Mechanize < Capybara::Driver::RackTest
   
   def get(url, params = {}, headers = {})
     if remote?(url)
-      process_remote_request(:get, url, params)
+      process_remote_request(:get, url, params, headers)
     else
       register_local_request
       super
@@ -86,7 +86,7 @@ class Capybara::Driver::Mechanize < Capybara::Driver::RackTest
   
   def put(url, params = {}, headers = {})
     if remote?(url)
-      process_remote_request(:put, url)
+      process_remote_request(:put, url, params, headers)
     else
       register_local_request
       super
@@ -142,14 +142,29 @@ class Capybara::Driver::Mechanize < Capybara::Driver::RackTest
       else
         @last_remote_host = "#{remote_uri.host}:#{remote_uri.port}"
       end
-      
+
       reset_cache
+      params, headers = options
       #In order to appropriately capture pages from which mechanize throws an exception
       begin
-        @agent.send *( [method, url] + options)
+        case method
+        when :get
+          @agent.get({ :url => url, :headers => headers, :params => params })
+        when :post
+          @agent.post(url, params, headers)
+        when :put
+          # 2nd parameter (entity) intentionally left blank
+          # Mechanize wants it to be the name of the resource being put but we
+          # can not easily determine that.
+
+          # Mechanize does not support extra params with a put request
+          @agent.put(url, '', { :headers => headers })
+        when :delete
+          @agent.delete(url, params, :headers => headers)
+        end
       rescue Exception => e
         @agent.history.push(e.page)
-      end        
+      end
 
       @last_request_remote = true
     end

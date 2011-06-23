@@ -24,6 +24,15 @@ class ExtendedTestApp < TestApp#< Sinatra::Base
   post '/host' do
     "current host is #{request.host}:#{request.port}, method post"
   end
+  
+  delete('/test_params') do
+    params['form']
+  end
+  
+  get('/test_headers') { env['HTTP_FOO'] }
+  post('/test_headers') { env['HTTP_FOO'] }
+  put('/test_headers') { env['HTTP_FOO'] }
+  delete('/test_headers') { env['HTTP_FOO'] }
 end
 
 if __FILE__ == $0
