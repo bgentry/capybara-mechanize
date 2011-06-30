@@ -143,7 +143,6 @@ class Capybara::Driver::Mechanize < Capybara::RackTest::Driver
         @last_remote_host = "#{remote_uri.host}:#{remote_uri.port}"
       end
 
-      reset_cache
       params, headers = options
       #In order to appropriately capture pages from which mechanize throws an exception
       begin
